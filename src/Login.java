@@ -8,10 +8,10 @@ import java.util.Scanner;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class Login {
+
   public static void main(String[] args) throws SQLException, IOException {
-
     Order order = new Order();
-
+    Shoe s = new Shoe();
     Customer customer;
     AddToCart addToCart = new AddToCart();
     Scanner scanner = new Scanner(System.in);
@@ -20,6 +20,7 @@ public class Login {
     System.out.println("ENTER PASSWORD:");
     String password = scanner.nextLine();
     customer = ShoeRepository.getCustomerByLogin(firstName, password);
+
 
     try {
       DBConnection dbConnection = DBConnection.getInstance();
@@ -47,46 +48,48 @@ public class Login {
             System.out.println("3. Sandals");
             System.out.println("4. Sneakers");
             System.out.println("5. Uggs");
-            System.out.println("6. Orders");
-            System.out.println("7. Print a list of all shoes");
-            System.out.println("8. Print all shoes with a price under 700");
-            System.out.println("9. Print all shoes that are pink");
+            System.out.println("6. Show Order");
+            System.out.println("7. Sort by brand");
+            System.out.println("8. Sort by price");
+            System.out.println("9. Sort by color");
             System.out.println("10. Exit");
 
             int choice = scanner.nextInt();
             String category = "";
             switch (choice) {
               case 1 -> category = "Boots";
+
               case 2 -> category = "Crocs";
+
               case 3 -> category = "Sandals";
+
               case 4 -> category = "Sneakers";
+
               case 5 -> category = "Uggs";
+
               case 6 -> {
                 if (order.getShoes().size() > 0) {
                   order.getShoes().forEach(e -> System.out.println(e.toStringWithoutQuantity()));
+
                 } else {
                   System.out.println("You have not added any shoes to your order yet.");
                 }
               }
+
               case 7 -> {
-                List<Shoe> shoes = ShoeRepository.getAllShoes();
-                shoes.forEach(shoe -> System.out.println(shoe));
+                brandSearch(scanner);
               }
+
               case 8 -> {
-                List<Shoe> shoesUnderSevenhundred = ShoeRepository.getAllShoes();
-                shoesUnderSevenhundred.stream()
-                    .filter(shoe -> shoe.getPrice() <= 700)
-                    .forEach(System.out::println);
+                maxPrice(scanner);
               }
+
               case 9 -> {
-                List<Shoe> shoesBlack = ShoeRepository.getAllShoes();
-                shoesBlack.stream()
-                    .filter(shoe -> shoe.getColor().equals("black"))
-                    .forEach(System.out::println);
+                colorSearch(scanner);
               }
               case 10 -> {
                 exitMenu = true;
-                System.out.println("Come back soon " + firstName + "!");
+                System.out.println("Thank you for shopping with us,come back soon " + firstName + "!");
               }
               default -> System.out.println("Not a valid choice!");
             }
@@ -103,7 +106,7 @@ public class Login {
                 System.out.println("Not a valid choice! Select Shoe again!");
               } else {
                 order.addShoe(shoeList.get(choice - 1));
-                int orderId = addToCart.addToCartWithOutParameter(customer.getId(), order.getId(), shoeList.get(choice - 1).getId());
+                int orderId = addToCart.addToCart(customer.getId(), order.getId(), shoeList.get(choice - 1).getId());
                 if (orderId > 0) {
                   order.setId(orderId);
                   System.out.println("You have added " + shoeList.get(choice - 1).toString() + " to your order.");
@@ -114,11 +117,35 @@ public class Login {
           }
 
         } else {
-          System.out.println("Access denied!");
+          System.out.println("Wrong username or password!");
         }
       }
     } catch (Exception e) {
       e.printStackTrace();
     }
   }
+
+  private static void brandSearch(Scanner scanner) throws SQLException, IOException {
+    System.out.println("What brand would you like to search for?");
+    String brand = scanner.next();
+    List<Shoe> list = ShoeRepository.getAllShoes();
+    list.stream().filter(ae -> ae.getBrand().equals(brand)).forEach(System.out::println);
+  }
+
+  private static void maxPrice(Scanner scanner) throws SQLException, IOException {
+    System.out.println("What is the max price you would like to pay?");
+    int maxPrice = scanner.nextInt();
+    List<Shoe> list = ShoeRepository.getAllShoes();
+    list.stream().filter(ae -> ae.getPrice() <= maxPrice).forEach(System.out::println);
+  }
+
+  private static void colorSearch(Scanner scanner) throws SQLException, IOException {
+    System.out.println("What color would you like to search for?");
+    String color = scanner.next();
+    List<Shoe> shoesColor = ShoeRepository.getAllShoes();
+    shoesColor.stream()
+        .filter(shoe -> shoe.getColor().equals(color))
+        .forEach(System.out::println);
+  }
 }
+

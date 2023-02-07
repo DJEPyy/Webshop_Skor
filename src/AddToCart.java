@@ -5,7 +5,7 @@ import java.sql.SQLException;
 import java.sql.Types;
 
 public class AddToCart {
-  int addToCartWithOutParameter(int customerId, int orderId, int productId) throws IOException {
+  int addToCart(int customerId, int orderId, int productId) throws IOException {
     try {
       Connection connection = DBConnection.getInstance().getConnection();
       CallableStatement statement = connection.prepareCall(

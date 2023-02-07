@@ -1,3 +1,6 @@
+import java.util.ArrayList;
+import java.util.List;
+
 public class Shoe {
   protected int id;
   protected String size;
@@ -14,14 +17,6 @@ public class Shoe {
     this.color = color;
     this.price = price;
     this.quantity = quantity;
-  }
-
-  public Shoe(int id, String size, String brand, String color, int price) {
-    this.id = id;
-    this.size = size;
-    this.brand = brand;
-    this.color = color;
-    this.price = price;
   }
 
   public Shoe(){}
@@ -77,12 +72,14 @@ public class Shoe {
   @Override
   public String toString() {
     return "Brand: "+ brand + ". " + "Size: " + size + ". " +
-        "Color: " + color + ". "+  " Price: " +  price + ".";
+        "Color: " + color + ". "+  " Price: " +  price + "." + " Quantity: " + quantity + ". ";
   }
 
   public String toStringWithoutQuantity() {
     return "Brand: "+ brand + ". " + "Size: " + size + ". " +
         "Color: " + color + ". "+  "Price: " +  price + ". ";
   }
+
+
 
 }
